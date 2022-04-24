@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>console</headerType>
+  <jar>C:\Users\FrA\Desktop\Altro\Progetti\NumeriPrimi\PrimeNumbers\PrimeNumbers.jar</jar>
+  <outfile>C:\Users\FrA\Desktop\PrimeNumbers.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>true</restartOnCrash>
+  <manifest></manifest>
+  <icon></icon>
+  <singleInstance>
+    <mutexName>PrimeNumbers</mutexName>
+    <windowTitle>PrimeNumbers</windowTitle>
+  </singleInstance>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>17.0.1</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJdk</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.1.0.0</fileVersion>
+    <txtFileVersion>1.0.0</txtFileVersion>
+    <fileDescription>Writes in a file the prime numbers betweeen 2 and an user-defined cap</fileDescription>
+    <copyright>GNU GPL Version 3, 29 June 2007</copyright>
+    <productVersion>0.1.0.0</productVersion>
+    <txtProductVersion>1.0.0</txtProductVersion>
+    <productName>PrimeNumbers</productName>
+    <companyName></companyName>
+    <internalName>Prime Number finder</internalName>
+    <originalFilename>PrimeNumbers.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
+  </versionInfo>
+</launch4jConfig>
