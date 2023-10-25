@@ -18,32 +18,48 @@
 
 package PrimeNumbers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 
 class PrimeNumbersTest {
     @Test
-    void ok() {
+    void noThreading() {
         PrimeNumbers classUnderTest = new PrimeNumbers();
-        String[] args = { "1000", "primes.txt" };
-
-        assertEquals(0, classUnderTest.run(args));
+        classUnderTest.find(50000000, 1);
     }
 
     @Test
-    void tooLarge() {
+    void threads2() {
         PrimeNumbers classUnderTest = new PrimeNumbers();
-        String[] args = { "100000000000000000000000000000000000000000000000000000000000", "primes.txt" };
-
-        assertEquals(1, classUnderTest.run(args));
+        classUnderTest.find(50000000, 2);
     }
 
     @Test
-    void invalidFilepath() {
+    void threads4() {
         PrimeNumbers classUnderTest = new PrimeNumbers();
-        String[] args = { "1000", "primes.?" };
+        classUnderTest.find(50000000, 4);
+    }
 
-        assertEquals(1, classUnderTest.run(args));
+    @Test
+    void threads8() {
+        PrimeNumbers classUnderTest = new PrimeNumbers();
+        classUnderTest.find(50000000, 8);
+    }
+
+    @Test
+    void threads16() {
+        PrimeNumbers classUnderTest = new PrimeNumbers();
+        classUnderTest.find(50000000, 16);
+    }
+
+    @Test
+    void threads32() {
+        PrimeNumbers classUnderTest = new PrimeNumbers();
+        classUnderTest.find(50000000, 32);
+    }
+
+    @Test
+    void threads64() {
+        PrimeNumbers classUnderTest = new PrimeNumbers();
+        classUnderTest.find(50000000, 64);
     }
 }

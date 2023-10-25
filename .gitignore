@@ -3,6 +3,10 @@
 
 # Ignore Gradle build output directory
 build
+bin
+
+# Ignore VSCode directory
+.vscode
 
 # Ignore output file
 primes.txt

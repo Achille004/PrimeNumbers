@@ -22,90 +22,126 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * @author Francesco Marras
  */
 public class PrimeNumbers {
-    public byte run(String[] args) {
-        byte endStatus;
+    private static final int THREADS = 16;
+    private List<Long> primeList;
 
+    public PrimeNumbers() {
+        primeList = new LinkedList<>();
+    }
+
+    public byte run(String... args) {
+        String maxString, fileNameString;
         // if 2 args are given, tries to run with these
         if (args.length == 2) {
             System.out.println("Running on given args...");
-            if (isNum(args[0])) {
-                long max = Long.parseLong(args[0]);
-                if (max < 0) {
-                    System.out.println("\"" + args[0] + "\" is negative.");
-                    endStatus = 1;
-                } else {
-                    if (isValidFileName(args[1])) {
-                        endStatus = find(max, args[1]);
-                    } else {
-                        System.err.println("\"" + args[1] + "\" is not a valid path.");
-                        endStatus = 1;
-                    }
-                }
-            } else {
-                System.err.println("\"" + args[0] + "\" is not a number / is too large.");
-                endStatus = 1;
-            }
+            maxString = args[0];
+            fileNameString = args[1];
         } else {
             Scanner scanner = new Scanner(System.in);
-            String in;
 
             System.out.println("Max value: ");
-            in = scanner.nextLine();
-            if (isNum(in)) {
-                long max = Long.parseLong(in);
+            maxString = scanner.nextLine();
 
-                if (max < 0) {
-                    System.out.println("\"" + in + "\" is negative.");
-                    endStatus = 1;
-                } else {
-                    System.out.println("File name: ");
-                    in = scanner.nextLine();
-
-                    if (isValidFileName(in)) {
-                        endStatus = find(max, in);
-                    } else {
-                        System.err.println("\"" + in + "\" is not a valid path.");
-                        endStatus = 1;
-                    }
-                }
-            } else {
-                System.err.println("\"" + in + "\" is not a number / is too large.");
-                endStatus = 1;
-            }
+            System.out.println("File name: ");
+            fileNameString = scanner.nextLine();
 
             scanner.close();
+        }
+
+        byte endStatus;
+        if (isNum(maxString)) {
+            long max = Long.parseLong(maxString);
+
+            if (max < 0) {
+                System.out.println("\"" + maxString + "\" is negative.");
+                endStatus = 1;
+            } else {
+                if (isValidFileName(fileNameString)) {
+                    find(max, THREADS);
+                    endStatus = save(fileNameString);
+                } else {
+                    System.err.println("\"" + fileNameString + "\" is not a valid path.");
+                    endStatus = 1;
+                }
+            }
+        } else {
+            System.err.println("\"" + maxString + "\" is not a number / is too large.");
+            endStatus = 1;
         }
         System.out.println("Program exited with status " + endStatus + ".");
 
         return endStatus;
     }
 
-    public byte find(long max, String filename) {
-        LinkedList<Long> list = new LinkedList<>();
-        list.add((long) 2);
-        list.add((long) 3);
+    public void find(long max, int numThreads) {
+        primeList.add(2L);
+        primeList.add(3L);
+    
+        List<Thread> threads = new ArrayList<>(numThreads);
+    
+        long step = (max - 5) / numThreads;
+        long start = 5;
+    
+        for (int i = 0; i < numThreads; i++) {
+            long end = start + step;
+            if(end % 2 == 0) {
+                end--;
+            }
 
-        for (long num = 5; num < max; num += 2) {
-            if (isPrime(num)) {
-                list.add(num);
+            final long threadStart = start;
+            final long threadEnd = (i == numThreads - 1) ? max : end;
+
+            Thread thread = new Thread(() -> {
+                for (long num = threadStart; num <= threadEnd; num += 2) {
+
+                    if (isPrime(num)) {
+                        synchronized (primeList) {
+                            primeList.add(num);
+                        }
+                    }
+                }
+            });
+    
+            threads.add(thread);
+            thread.start();
+    
+            start = end + 2;
+        }
+    
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+    }
+    
+
+    private byte save(String filename) {
+        Long[] primeArray = primeList.toArray(new Long[primeList.size()]);
+        Arrays.sort(primeArray);
+
+        System.out.println("Prova: " + primeArray.length);
 
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
-            for (long num : list) {
+            for (long num : primeArray) {
                 pw.println(num);
             }
             pw.flush();
             pw.close();
 
-            System.out.println("Execution complted (using 6k +- 1 test).");
+            System.out.println("Execution completed (using 6k +- 1 test).");
             return 0;
         } catch (IOException e) {
             System.out.println("Error writing file: ");
@@ -122,7 +158,7 @@ public class PrimeNumbers {
      */
     private static boolean isPrime(long num) {
         // if num is divisible by 2 or 3 is not prime
-        if (num % 2 == 0 || num % 3 == 0) {
+        if (num % 3 == 0) {
             return false;
         }
 
